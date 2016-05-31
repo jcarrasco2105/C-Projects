@@ -1,34 +1,141 @@
-// Code for Project 1
-// Report poll results
+//CIS 31
+//Project 2: Water Bill Calculator
 
 #include <iostream>
-using namespace std;   // pp. 37-38 in Savitch book explain this line
+#include <string>
+using namespace std;
 
 int main()
 {
-    int numberSurveyed;
-    int preferChocolate;
-    int preferVanilla;
+  
+ //Constant Variables
+    const double FIRST_RATE = 2.75;  //First Tier Rate for both seasons
+    const double LOW_RATE = 2.89;    //Second Tier Rate for low season after basic HCF
+    const double HIGH_RATE =3.38;    //Second Tier Rate for high season after basic HCF
+    const int HIGH_HCF = 44;         //HCF allowed for first tier rate during high season
+    const int LOW_HCF = 31;          //HCF allowed for first tier rate during low season
     
-    cout << "How many ice cream lovers were surveyed? ";
-    cin >> numberSurveyed;
-    cout << "How many of them prefer chocolate to vanilla? ";
-    cin >> preferChocolate;
-    cout << "How many of them prefer vanilla to chocolate? ";
-    cin >> preferVanilla;
+ //Qualifiers to make sure that valid info was inputted.
     
-    double pctChocolate = 100.0 * preferChocolate / numberSurveyed;
-    double pctVanilla = 100.0 * preferVanilla / numberSurveyed;
+    cout<< "Initial meter reading: ";
+    int initialMeter;
+    cin>> initialMeter;
     
-    cout.setf(ios::fixed);       // see pp. 30-31 in Savitch book
-    cout.precision(1);
+if (initialMeter <0)
+    {   cout<<"---\n";
+        cout<< "The initial meter reading must be nonnegative.\n";
+        return 1;
+    }
+
+    cout<< "Final meter reading: ";
+    int finalMeter;
+    cin>> finalMeter;
+
+if (finalMeter<initialMeter)
+    {   cout<<"---\n";
+        cout<<  "The final reading must be at least as large as the initial reading.\n";
+        return 1;
+    }
     
-    cout << endl;
-    cout << pctChocolate << "% prefer chocolate." << endl;
-    cout << pctVanilla << "% prefer vanilla." << endl;
+    cin.ignore(100000,'\n');
     
-    if (preferChocolate > preferVanilla)
-        cout << "Chocolate is more popular than vanilla." << endl;
+    cout<< "Customer name: ";
+    string customerName;
+    getline(cin,customerName);
+    
+if (customerName=="")
+    {
+        cout<< "---\n";
+        cout<< "You must enter a customer name.\n";
+        return 1;
+    }
+    
+    cout<< "Month number (1=Jan, 2=Feb, etc.): ";
+    int monthNum;
+    cin>> monthNum;
+    
+if (monthNum<1 || monthNum>12)
+        {cout<<"---\n";
+        cout<< "The month number must be in the range 1 through 12.\n";
+                return 1;
+        }
+    
+//Calculations
+
+    int waterUsed = finalMeter - initialMeter;
+    int secWater;      //HCF used with second tier rate.
+    double firstBill;  //Amount for first tier water
+    double secondBill; //Amount for second tier water
+    double billAmount;
+
+    //High Season
+    if (monthNum >= 4 && monthNum <=10)
+    {
+        if (waterUsed <= HIGH_HCF)
+            billAmount = waterUsed * FIRST_RATE;
+        else
+        {
+            secWater = waterUsed - HIGH_HCF;
+            firstBill = FIRST_RATE * HIGH_HCF;
+            secondBill = secWater * HIGH_RATE;
+            billAmount = firstBill + secondBill;
+        }
+     }
+    
+    //Low Season
     else
-        cout << "Vanilla is more popular than chocolate." << endl;
+    {
+        if (waterUsed <= LOW_HCF)
+            billAmount = waterUsed * FIRST_RATE;
+        else
+        {
+            secWater = waterUsed - LOW_HCF;
+            firstBill = FIRST_RATE * LOW_HCF;
+            secondBill = secWater * LOW_RATE;
+            billAmount = firstBill + secondBill;
+        }
+    }
+
+    //Last Line Output
+    cout.setf(ios::fixed);
+    cout.precision(2);
+    cout<< "---\n";
+    cout<< "The bill for "<< customerName << " is $" << billAmount << endl;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
